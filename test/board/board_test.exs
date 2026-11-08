@@ -94,8 +94,8 @@ defmodule Board.BoardTest do
     col = 0
     {:ok, board} = SavedFilesManager.load("./test/assets/saved_game_1.txt", false)
 
-    res = lookup(row, col, board)
+    {content, _} = lookup(row, col, board)
 
-    assert res == nil
+    assert content == :empty
   end
 end
