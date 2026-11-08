@@ -1,5 +1,4 @@
 defmodule ChessElixir.Data.SavedFilesManager do
-  require IEx
   alias ChessElixir.Board.Board
   alias ChessElixir.Board.Coordinate
 

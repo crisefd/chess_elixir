@@ -2,6 +2,7 @@ defmodule Board.BoardTest do
   use ExUnit.Case
   alias ChessElixir.Board.Coordinate
   alias ChessElixir.Board.Board
+  alias ChessElixir.Data.SavedFilesManager
   import ChessElixir.Board.Board
 
   # @initial_game_state [
@@ -65,5 +66,36 @@ defmodule Board.BoardTest do
 
     board = new()
     assert board == expected_new_chessboard
+  end
+
+  test "Lookup a piece" do
+    row = 2
+    col = 0
+    {:ok, board} = SavedFilesManager.load("./test/assets/saved_game_1.txt", false)
+
+    {piece, coor} = lookup(row, col, board)
+
+    assert piece == :pawn
+    assert coor.color == :black
+
+    row = 7
+    col = 3
+    {:ok, board} = SavedFilesManager.load("./test/assets/saved_game_1.txt", false)
+
+    {piece, coor} = lookup(row, col, board)
+
+    assert piece == :king
+    assert coor.color == :white
+
+  end
+
+  test "Lookup missing piece" do
+    row = 1
+    col = 0
+    {:ok, board} = SavedFilesManager.load("./test/assets/saved_game_1.txt", false)
+
+    res = lookup(row, col, board)
+
+    assert res == nil
   end
 end

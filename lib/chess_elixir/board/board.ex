@@ -12,6 +12,8 @@ defmodule ChessElixir.Board.Board do
           pawn: [Coordinate.t()]
         }
 
+  @type lookup_result :: {atom(), Coordinate.t()} | nil
+
   defstruct king: [],
             queen: [],
             rook: [],
@@ -31,22 +33,6 @@ defmodule ChessElixir.Board.Board do
     }
   end
 
-  @spec lookup_by_piece(piece(), integer(), integer(), t()) :: Coordinate.t()
-
-
-  for piece <- [:king, :queen, :rook, :bishop, :knight, :pawn] do
-
-     def lookup_by_piece(unquote(piece), row, column, %{unquote(piece) => coors}) do
-        coors
-        |> Enum.find(fn coor ->
-          coor.row == row && coor.column == column
-        end)
-    end
-
-  end
-
-
-
   @spec lookup(integer(), integer(), t()) :: Coordinate.t()
 
   def lookup(row, column, board) do
@@ -55,16 +41,36 @@ defmodule ChessElixir.Board.Board do
 
   end
 
-  @spec do_lookup([piece()], integer(), integer(), t(), Coordinate.t()) :: Coordinate.t()
+  @spec do_lookup([piece()], integer(), integer(), t(), lookup_result()) :: lookup_result()
 
   defp do_lookup([], _row, _colum, _board, result), do: result
 
   defp do_lookup([piece | pieces], row, column, board, _result) do
     new_result = lookup_by_piece(piece, row, column, board)
-    if !new_result  do
-      do_lookup(pieces, row, column, board, new_result)
+    if new_result == nil  do
+      do_lookup(pieces, row, column, board, nil)
     else
       do_lookup([], row, column, board, new_result)
+    end
+
+  end
+
+  @spec lookup_by_piece(piece(), integer(), integer(), t()) :: lookup_result()
+
+  for piece <- [:king, :queen, :rook, :bishop, :knight, :pawn] do
+
+     def lookup_by_piece(unquote(piece), row, column, %{unquote(piece) => coors}) do
+        coor =
+          coors
+          |> Enum.find(fn coor ->
+            coor.row == row && coor.column == column
+          end)
+        if coor == nil do
+          nil
+        else
+          {unquote(piece), coor}
+        end
+
     end
 
   end
