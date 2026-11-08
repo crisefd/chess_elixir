@@ -33,11 +33,16 @@ defmodule ChessElixir.Board.Board do
 
   @spec lookup_by_piece(piece(), integer(), integer(), t()) :: Coordinate.t()
 
-  def lookup_by_piece(:king, row, column, %{king: coors}) do
-    coors
-    |> Enum.find(fn coor ->
-      coor.row == row && coor.column == column
-    end)
+
+  for piece <- [:king, :queen, :rook, :bishop, :knight, :pawn] do
+
+     def lookup_by_piece(unquote(piece), row, column, %{unquote(piece) => coors}) do
+        coors
+        |> Enum.find(fn coor ->
+          coor.row == row && coor.column == column
+        end)
+    end
+
   end
 
 

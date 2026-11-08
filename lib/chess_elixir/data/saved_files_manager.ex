@@ -20,7 +20,6 @@ defmodule ChessElixir.Data.SavedFilesManager do
   @spec load(filename :: binary(), partial_path :: boolean()) :: Board.t()
 
   def load(filename, false) do
-    IO.inspect File.cwd()
     case File.read(filename) do
       {:ok, contents} ->
         {:ok, process(contents)}
@@ -32,7 +31,6 @@ defmodule ChessElixir.Data.SavedFilesManager do
 
   def load(filename, true) do
     path = "../../chess_game_saved_files/#{filename}"
-    IO.inspect File.cwd()
     case File.read(path) do
       {:ok, contents} ->
         {:ok, process(contents)}
@@ -93,34 +91,11 @@ defmodule ChessElixir.Data.SavedFilesManager do
     [ board: new_board, index: row_idx + 1]
   end
 
-  defp add_coor(:king, color, %Board{king: king_list} = board, col_idx, row_idx) do
-    coor = %Coordinate{row: row_idx, column: col_idx, color: color}
-    %{ board | king: [coor | king_list] }
-  end
-
-  defp add_coor(:queen, color, %Board{queen: queen_list} = board, col_idx, row_idx) do
-    coor = %Coordinate{row: row_idx, column: col_idx, color: color}
-    %{ board | queen: [coor | queen_list] }
-  end
-
-  defp add_coor(:rook, color, %Board{rook: rook_list} = board, col_idx, row_idx) do
-    coor = %Coordinate{row: row_idx, column: col_idx, color: color}
-    %{ board | rook: [coor | rook_list] }
-  end
-
-  defp add_coor(:bishop, color, %Board{bishop: bishop_list} = board, col_idx, row_idx) do
-    coor = %Coordinate{row: row_idx, column: col_idx, color: color}
-    %{ board | bishop: [coor | bishop_list] }
-  end
-
-  defp add_coor(:knight, color, %Board{knight: knight_list} = board, col_idx, row_idx) do
-    coor = %Coordinate{row: row_idx, column: col_idx, color: color}
-    %{ board | knight: [coor | knight_list] }
-  end
-
-  defp add_coor(:pawn, color, %Board{pawn: pawn_list} = board, col_idx, row_idx) do
-    coor = %Coordinate{row: row_idx, column: col_idx, color: color}
-    %{ board | pawn: [coor | pawn_list] }
+  for piece <- [:king, :queen, :rook, :bishop, :knight, :pawn]  do
+    defp add_coor(unquote(piece), color, %Board{unquote(piece) => piece_list} = board, col_idx, row_idx) do
+      coor = %Coordinate{row: row_idx, column: col_idx, color: color}
+      %{ board | unquote(piece) => [coor | piece_list] }
+    end
   end
 
 
