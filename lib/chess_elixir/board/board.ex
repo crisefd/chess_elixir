@@ -12,7 +12,7 @@ defmodule ChessElixir.Board.Board do
           pawn: [Coordinate.t()]
         }
 
-  @type lookup_result :: {atom(), Coordinate.t()} | nil
+  @type lookup_result :: {atom(), Coordinate.t()}
 
   defstruct king: [],
             queen: [],
@@ -42,6 +42,8 @@ defmodule ChessElixir.Board.Board do
   end
 
   @spec do_lookup([piece()], integer(), integer(), t(), lookup_result()) :: lookup_result()
+
+  defp do_lookup([], _row, _colum, _board, nil), do: {:empty, %Coordinate{color: nil}}
 
   defp do_lookup([], _row, _colum, _board, result), do: result
 
